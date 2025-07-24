@@ -20,6 +20,8 @@ public class SecurityConfigurations {
                 .authorizeHttpRequests(auth -> {
                     auth.requestMatchers(HttpMethod.POST, "/usuarios").permitAll();  // Permitir registrar usuarios sin login
                     auth.requestMatchers(HttpMethod.POST, "/login").permitAll();
+                    auth.requestMatchers(HttpMethod.POST, "/cursos").permitAll();
+                    auth.requestMatchers(HttpMethod.POST, "/topicos").permitAll();
                     auth.requestMatchers("/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**").permitAll();
                     auth.anyRequest().authenticated();
                 })
