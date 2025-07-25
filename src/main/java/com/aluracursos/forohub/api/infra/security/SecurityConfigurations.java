@@ -22,6 +22,7 @@ public class SecurityConfigurations {
                     auth.requestMatchers(HttpMethod.POST, "/login").permitAll();
                     auth.requestMatchers(HttpMethod.POST, "/cursos").permitAll();
                     auth.requestMatchers(HttpMethod.POST, "/topicos").permitAll();
+                    auth.requestMatchers(HttpMethod.GET, "/topicos").permitAll();
                     auth.requestMatchers("/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**").permitAll();
                     auth.anyRequest().authenticated();
                 })
