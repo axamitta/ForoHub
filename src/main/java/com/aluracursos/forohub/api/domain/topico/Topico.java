@@ -3,6 +3,7 @@ package com.aluracursos.forohub.api.domain.topico;
 import com.aluracursos.forohub.api.domain.curso.Curso;
 import com.aluracursos.forohub.api.domain.usuario.Usuario;
 import jakarta.persistence.*;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -44,5 +45,17 @@ public class Topico {
         this.status = Status.NO_RESPONDIDO;
         this.autor = autor;
         this.curso = curso;
+    }
+
+    public void actualizarDatos(@Valid DatosActualizarTopico datos) {
+        if (datos.titulo() != null) {
+            this.titulo = datos.titulo();
+        }
+        if (datos.mensaje() != null) {
+            this.mensaje = datos.mensaje();
+        }
+        if (datos.status() != null) {
+            this.status = datos.status();
+        }
     }
 }

@@ -87,5 +87,19 @@ public class TopicoController {
         return ResponseEntity.ok(new DatosDetalleTopico(topico));
     }
 
+    @Transactional
+    @PutMapping("/{id}")
+    public ResponseEntity<?> actualizarTopico(@PathVariable Long id, @RequestBody @Valid DatosActualizarTopico datos){
+        var topicoOptional = topicoRepository.findById(id);
+        if (topicoOptional.isPresent()) {
+            var topico = topicoOptional.get();
+            topico.actualizarDatos(datos);
+            return ResponseEntity.ok(new DatosDetalleTopico(topico));
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("error", "No existe tópico con este ID."));
+        }
+    }
+
 }
 
