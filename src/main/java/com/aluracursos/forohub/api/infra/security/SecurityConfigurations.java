@@ -25,6 +25,7 @@ public class SecurityConfigurations {
                     auth.requestMatchers(HttpMethod.GET, "/topicos").permitAll();
                     auth.requestMatchers(HttpMethod.GET, "/topicos/{id}").permitAll();
                     auth.requestMatchers(HttpMethod.PUT, "/topicos/**").permitAll();
+                    auth.requestMatchers(HttpMethod.DELETE, "/topicos/**").permitAll();
                     auth.requestMatchers("/error").permitAll();
                     auth.requestMatchers("/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**").permitAll();
                     auth.anyRequest().authenticated();

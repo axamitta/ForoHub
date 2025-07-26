@@ -57,16 +57,16 @@ public class TopicoController {
 //Devuelve una lista de todos los topicos sin ordenar
     //@GetMapping
     //public ResponseEntity<List<DatosListadoTopico>> listarTopicos() {
-        //var listaTopicos = topicoRepository.findAll()
-               // .stream()
-               // .map(DatosListadoTopico::new)
-               // .toList();
-        //return ResponseEntity.ok(listaTopicos);
+    //var listaTopicos = topicoRepository.findAll()
+    // .stream()
+    // .map(DatosListadoTopico::new)
+    // .toList();
+    //return ResponseEntity.ok(listaTopicos);
     //}
 
     //Devuelve una página con los tópicos ordenados según criterio
     @GetMapping
-    public ResponseEntity<Page<DatosListadoTopico>> listarTopicos(@PageableDefault(size = 10, sort = "fechaCreacion")Pageable paginacion){
+    public ResponseEntity<Page<DatosListadoTopico>> listarTopicos(@PageableDefault(size = 10, sort = "fechaCreacion") Pageable paginacion) {
         var page = topicoRepository.findAll(paginacion)
                 .map(DatosListadoTopico::new);
         return ResponseEntity.ok(page);
@@ -74,11 +74,11 @@ public class TopicoController {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> detallarTopico(@PathVariable Long id) {
-        if(id == null || id <= 0){
+        if (id == null || id <= 0) {
             return ResponseEntity.badRequest().body("El ID proporcionado no es válido.");
         }
         var topicoBuscado = topicoRepository.findById(id);
-        if(topicoBuscado.isEmpty()) {
+        if (topicoBuscado.isEmpty()) {
             Map<String, String> error = Map.of("error", "No existe tópico con este ID.");
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
 
@@ -89,7 +89,7 @@ public class TopicoController {
 
     @Transactional
     @PutMapping("/{id}")
-    public ResponseEntity<?> actualizarTopico(@PathVariable Long id, @RequestBody @Valid DatosActualizarTopico datos){
+    public ResponseEntity<?> actualizarTopico(@PathVariable Long id, @RequestBody @Valid DatosActualizarTopico datos) {
         var topicoOptional = topicoRepository.findById(id);
         if (topicoOptional.isPresent()) {
             var topico = topicoOptional.get();
@@ -99,7 +99,19 @@ public class TopicoController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Map.of("error", "No existe tópico con este ID."));
         }
+
     }
 
-}
+    @Transactional
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> eliminarTopico(@PathVariable Long id) {
+        if(topicoRepository.existsById(id)){
+            topicoRepository.deleteById(id);
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("error", "No existe tópico con este ID."));
 
+        }
+    }
+}
