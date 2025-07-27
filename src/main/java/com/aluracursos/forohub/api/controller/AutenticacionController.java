@@ -8,6 +8,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -34,14 +35,21 @@ public class AutenticacionController {
             var authentication = authenticationManager.authenticate(authToken);
             var usuario = (Usuario) authentication.getPrincipal();
 
-            // Aquí puedes buscar la entidad Usuario si necesitas pasarla completa al TokenService
-            // Pero para simplificar, suponemos que el correo electrónico es suficiente
-            var tokenJWT = tokenService.generarToken(usuario);
+            if (usuario == null) {
+                return ResponseEntity.status(401).body(Map.of("error", "Usuario no encontrado"));
+            }
 
+            var tokenJWT = tokenService.generarToken(usuario);
             return ResponseEntity.ok(Map.of("token", tokenJWT));
+
+        } catch (BadCredentialsException ex) {
+            return ResponseEntity.status(401).body(Map.of("error", "Credenciales inválidas"));
         } catch (AuthenticationException ex) {
-            return ResponseEntity.status(401).body(Map.of("error", "Correo o contraseña inválidos"));
+            return ResponseEntity.status(401).body(Map.of("error", "No fue posible autenticar al usuario"));
+        } catch (Exception ex) {
+            return ResponseEntity.status(500).body(Map.of("error", "Error interno: " + ex.getMessage()));
         }
     }
 
 }
+

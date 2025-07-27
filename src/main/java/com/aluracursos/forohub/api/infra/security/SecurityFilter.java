@@ -32,15 +32,28 @@ public class SecurityFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        var tokenJWT = recuperarToken(request);
-        if(tokenJWT != null  && SecurityContextHolder.getContext().getAuthentication() == null){
-            var subject = tokenService.getSubject(tokenJWT);
-            var usuario = repository.findByNombre(subject)
-                    .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));;
-            var authentication = new UsernamePasswordAuthenticationToken(usuario, null, usuario.getAuthorities());
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-        }
 
+        var path = request.getRequestURI();
+
+        // ⛔ Evita procesar el filtro en /login (y /usuarios si también es público)
+        if (path.equals("/login") || path.equals("/usuarios")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+        var tokenJWT = recuperarToken(request);
+        if (tokenJWT != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            try {
+                var subject = tokenService.getSubject(tokenJWT);
+                var usuario = repository.findByNombre(subject)
+                        .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+                var authentication = new UsernamePasswordAuthenticationToken(usuario, null, usuario.getAuthorities());
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            } catch (RuntimeException ex) {
+                // Token inválido o usuario no encontrado, no hacemos nada
+                System.out.println("Token inválido o usuario no encontrado: " + ex.getMessage());
+                // También podrías registrar este intento en un logger real
+            }
+        }
         filterChain.doFilter(request, response);
 
     }
