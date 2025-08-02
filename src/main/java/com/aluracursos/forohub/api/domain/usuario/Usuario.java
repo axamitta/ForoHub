@@ -8,6 +8,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.ArrayList;
@@ -33,6 +34,7 @@ public class Usuario implements UserDetails {
     private String contrasena;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private Perfil perfil;
 
 
@@ -52,7 +54,7 @@ public class Usuario implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of();
+        return List.of(new SimpleGrantedAuthority("ROLE_" + perfil.name()));
     }
 
     @Override

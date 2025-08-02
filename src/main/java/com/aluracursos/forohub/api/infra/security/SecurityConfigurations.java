@@ -45,12 +45,12 @@ public class SecurityConfigurations {
                 .authorizeHttpRequests(auth -> {
                     auth.requestMatchers(HttpMethod.POST, "/usuarios").permitAll();  // Permitir registrar usuarios sin login
                     auth.requestMatchers(HttpMethod.POST, "/login").permitAll();
-//                    auth.requestMatchers(HttpMethod.POST, "/cursos").permitAll();
-//                    auth.requestMatchers(HttpMethod.POST, "/topicos").permitAll();
-//                    auth.requestMatchers(HttpMethod.GET, "/topicos").permitAll();
-//                    auth.requestMatchers(HttpMethod.GET, "/topicos/{id}").permitAll();
-//                    auth.requestMatchers(HttpMethod.PUT, "/topicos/**").permitAll();
-//                    auth.requestMatchers(HttpMethod.DELETE, "/topicos/**").permitAll();
+                    auth.requestMatchers(HttpMethod.POST, "/cursos").permitAll();
+                    auth.requestMatchers(HttpMethod.POST, "/topicos").hasRole("USUARIO");
+                    auth.requestMatchers(HttpMethod.GET, "/topicos").hasRole("ADMIN");
+                    auth.requestMatchers(HttpMethod.GET, "/topicos/{id}").permitAll();
+                    auth.requestMatchers(HttpMethod.PUT, "/topicos/**").hasAnyRole("USUARIO", "MODERADOR");
+                    auth.requestMatchers(HttpMethod.DELETE, "/topicos/**").hasRole("ADMIN");
                     auth.requestMatchers("/error").permitAll();
                     auth.requestMatchers("/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**").permitAll();
                     auth.anyRequest().authenticated();
