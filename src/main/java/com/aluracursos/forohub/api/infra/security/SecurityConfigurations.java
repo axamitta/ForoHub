@@ -45,7 +45,7 @@ public class SecurityConfigurations {
                 .authorizeHttpRequests(auth -> {
                     auth.requestMatchers(HttpMethod.POST, "/usuarios").permitAll();  // Permitir registrar usuarios sin login
                     auth.requestMatchers(HttpMethod.POST, "/login").permitAll();
-                    auth.requestMatchers(HttpMethod.POST, "/cursos").permitAll();
+                    auth.requestMatchers(HttpMethod.POST, "/cursos").hasRole("ADMIN");
                     auth.requestMatchers(HttpMethod.POST, "/topicos").hasRole("USUARIO");
                     auth.requestMatchers(HttpMethod.GET, "/topicos").hasRole("ADMIN");
                     auth.requestMatchers(HttpMethod.GET, "/topicos/{id}").permitAll();
